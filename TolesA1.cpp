@@ -1,21 +1,26 @@
+//CHAT GPT MODEL GPT-5.6
+//Consulted Friday Sept. 25 2026
+//Code blocks preluded by author
+//Comments are preluded by comment author.
+
 #include <iostream>
 #include <string>
 using namespace std;
 
 //Author ChatGPT
 bool isDigit(char c) {
-    return c >= '0' && c <= '9'; 
+    return c >= '0' && c <= '9'; //Toles: check if character is between 0 and 9 ASCII characters.
 }
 //Author ChatGPT
 bool isAddressChar(char c) {
-    return isDigit(c) || c == '.' || c == ':'; 
+    return isDigit(c) || c == '.' || c == ':'; //Toles: check if character period or colon.
 }
 
 //Author ChatGPT
 
-// Parse one decimal number starting at pos.
-// maxDigits limits the number of digits.
-// Returns the position immediately after the number.
+// GPT: Parse one decimal number starting at pos.
+// GPT: maxDigits limits the number of digits.
+// GPT: Returns the position immediately after the number.
 bool parseNumber(const string& str, size_t& pos, int maxDigits,
                  int maxValue, int& value) {
     size_t start = pos;
@@ -25,7 +30,7 @@ bool parseNumber(const string& str, size_t& pos, int maxDigits,
     if (pos >= str.size() || !isDigit(str[pos]))
         return false;
 
-    // Leading zero is allowed only when the number is exactly zero.
+    // GPT: Leading zero is allowed only when the number is exactly zero.
     if (str[pos] == '0') {
         ++pos;
 
@@ -48,7 +53,7 @@ bool parseNumber(const string& str, size_t& pos, int maxDigits,
             return false;
     }
 
-    // More digits than allowed.
+    // GPT: More digits than allowed.
     if (pos < str.size() && isDigit(str[pos]))
         return false;
 
@@ -56,14 +61,14 @@ bool parseNumber(const string& str, size_t& pos, int maxDigits,
         return false;
 
     value = number;
-    (void)start; // start is not otherwise needed
+    (void)start; //GPT: start is not otherwise needed
     return true;
 }
 
 bool extractIPv4(const std::string& str,
                  unsigned long& outAddress,
                  int& outPort) {
-    // Failure defaults.
+    // GPT: Failure defaults.
     outAddress = 0;
     outPort = -1;
 
@@ -71,15 +76,15 @@ bool extractIPv4(const std::string& str,
         if (!isDigit(str[start]))
             continue;
 
-        // A candidate cannot begin in the middle of another
-        // address-like sequence.
+        // GPT: A candidate cannot begin in the middle of another
+        // GPT: address-like sequence.
         if (start > 0 && isAddressChar(str[start - 1]))
             continue;
 
         size_t pos = start;
         int octet[4];
 
-        // Parse four octets.
+        // GPT: Parse four octets.
         bool valid = true;
 
         for (int i = 0; i < 4; ++i) {
@@ -100,24 +105,24 @@ bool extractIPv4(const std::string& str,
         if (!valid)
             continue;
 
-        // Optional port.
+        // GPT: Optional port.
         int port = -1;
 
         if (pos < str.size() && str[pos] == ':') {
             ++pos;
 
-            // A colon requires a valid port.
+            // GPT: A colon requires a valid port.
             if (!parseNumber(str, pos, 5, 65535, port)) {
                 continue;
             }
         }
 
-        // The candidate must end here. This prevents partial matches
-        // such as extracting 192.168.1.1 from 192.168.1.1.999.
+        // GPT: The candidate must end here. This prevents partial matches
+        // GPT: such as extracting 192.168.1.1 from 192.168.1.1.999.
         if (pos < str.size() && isAddressChar(str[pos]))
             continue;
 
-        // Build the 32-bit IPv4 value manually.
+        // GPT: Build the 32-bit IPv4 value manually.
         unsigned long address = 0;
         address = address * 256 + octet[0];
         address = address * 256 + octet[1];
@@ -132,6 +137,7 @@ bool extractIPv4(const std::string& str,
     return false;
 }
 
+//Author ChatGPT
 void printIPv4(unsigned long address, int port) {
     unsigned long a = (address >> 24) & 255;
     unsigned long b = (address >> 16) & 255;
@@ -151,22 +157,26 @@ void printIPv4(unsigned long address, int port) {
     cout << ")\n";
 }
 
+//Original author: Toles
+//Modified by GPT
 int main() {
     string inputText;
 
-    cout << "Enter noisy string of text: ";
-    getline(cin, inputText);
-
     unsigned long outAddress;
     int outPort;
-
-    bool found = extractIPv4(inputText, outAddress, outPort);
-
-    if (found) {
-        printIPv4(outAddress, outPort);
-    }
-    else {
-        cout << "No address found.\n";
+    bool found = 0;
+    while(!found){
+        cout << "Enter noisy string of text: ";
+        getline(cin, inputText); //GPT modification
+    
+        found = extractIPv4(inputText, outAddress, outPort);
+    
+        if (found) {
+            printIPv4(outAddress, outPort); //GPT modification
+        }
+        else {
+            cout << "No address found.\n";
+        }   
     }
 
     return 0;
