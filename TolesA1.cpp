@@ -166,9 +166,11 @@ int main() {
     int outPort;
     bool found = 0;
     while(!found){
-        cout << "Enter noisy string of text: ";
+        cout << "Enter a string (or 'END' to quit): ";
         getline(cin, inputText); //GPT modification
-    
+        if(inputText == "END"){
+            return 0;
+        }
         found = extractIPv4(inputText, outAddress, outPort);
     
         if (found) {
