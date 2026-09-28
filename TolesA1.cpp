@@ -1,11 +1,17 @@
 //CHAT GPT MODEL GPT-5.6
-//Consulted Friday Sept. 25 2026
+//Consulted Friday Sept. 25 2026, Sunday Sept. 27 2026.
 //Code blocks preluded by author
 //Comments are preluded by comment author.
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
 using namespace std;
+
+#ifndef testMode 
+#define testMode 0
+#endif
 
 //Author ChatGPT
 bool isDigit(char c) {
@@ -138,48 +144,75 @@ bool extractIPv4(const std::string& str,
 }
 
 //Author ChatGPT
-void printIPv4(unsigned long address, int port) {
+string printIPv4(unsigned long address, int port) {
     unsigned long a = (address >> 24) & 255;
     unsigned long b = (address >> 16) & 255;
     unsigned long c = (address >> 8)  & 255;
     unsigned long d = address & 255;
 
-    cout << "Extracted IPv4 address: "
+    stringstream output;
+
+    output << "Extracted IPv4 address: "
          << a << "." << b << "." << c << "." << d
          << " (decimal value: " << address
          << ", port: ";
 
     if (port == -1)
-        cout << "none";
+        output << "none";
     else
-        cout << port;
+        output << port;
 
-    cout << ")\n";
+    output << ")\n";
+    return output.str();
 }
 
 //Original author: Toles
 //Modified by GPT
 int main() {
     string inputText;
-
     unsigned long outAddress;
     int outPort;
     bool found = 0;
-    while(!found){
-        cout << "Enter a string (or 'END' to quit): ";
-        getline(cin, inputText); //GPT modification
+
+    #if testMode
+    ofstream outFile("output.txt");
+    ifstream inFile("testcases.txt");
+    while (getline (inFile, inputText)){
         if(inputText == "END"){
+            outFile << "Program terminated.";
+            outFile.close();
             return 0;
         }
         found = extractIPv4(inputText, outAddress, outPort);
     
         if (found) {
-            printIPv4(outAddress, outPort); //GPT modification
+            outFile << printIPv4(outAddress, outPort); //GPT modification
         }
         else {
-            cout << "No address found.\n";
+            outFile << "Invalid input: no valid IPv4 address found\n";
         }   
     }
-
+    outFile.close();
+    
+    #else
+        while(!found){
+                cout << "Enter a string (or 'END' to quit): ";
+                getline(cin, inputText); //GPT modification
+                if(inputText == "END"){
+                    cout << "Program terminated.\n";
+                    return 0;
+                }
+                found = extractIPv4(inputText, outAddress, outPort);
+            
+                if (found) {
+                    cout << printIPv4(outAddress, outPort); //GPT modification
+                }
+                else {
+                    cout << "Invalid input: no valid IPv4 address found\n";
+                }   
+            }
+        
+    #endif
+    
     return 0;
 }
