@@ -3,6 +3,7 @@
 //Code blocks preluded by author
 //Comments are preluded by comment author.
 
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -19,7 +20,7 @@ bool isDigit(char c) {
 }
 //Author ChatGPT
 bool isAddressChar(char c) {
-    return isDigit(c) || c == '.' || c == ':'; //Toles: check if character period or colon.
+    return isDigit(c) || c == '.' || c == ':'; //Toles: check if character period, colon or digit.
 }
 
 //Author ChatGPT
@@ -33,14 +34,14 @@ bool parseNumber(const string& str, size_t& pos, int maxDigits,
     int digits = 0;
     int number = 0;
 
-    if (pos >= str.size() || !isDigit(str[pos]))
+    if (pos >= str.size() || !isDigit(str[pos])) //Toles: if current character is not a digit or is outside length of str
         return false;
 
     // GPT: Leading zero is allowed only when the number is exactly zero.
     if (str[pos] == '0') {
         ++pos;
 
-        // A second digit means leading zero.
+        // GPT: A second digit means leading zero.
         if (pos < str.size() && isDigit(str[pos]))
             return false;
 
@@ -48,10 +49,10 @@ bool parseNumber(const string& str, size_t& pos, int maxDigits,
         return true;
     }
 
-    while (pos < str.size() &&
+    while (pos < str.size() && //Toles: While current charachter within str size, is a digit, and within max digits
            isDigit(str[pos]) &&
            digits < maxDigits) {
-        number = number * 10 + (str[pos] - '0');
+        number = number * 10 + (str[pos] - '0'); //Toles: add current character to number
         ++pos;
         ++digits;
 
@@ -195,11 +196,13 @@ int main() {
     outFile.close();
     
     #else
-        while(!found){
+    bool active = 1;
+        while(active){
                 cout << "Enter a string (or 'END' to quit): ";
                 getline(cin, inputText); //GPT modification
                 if(inputText == "END"){
                     cout << "Program terminated.\n";
+                    active = 0;
                     return 0;
                 }
                 found = extractIPv4(inputText, outAddress, outPort);
